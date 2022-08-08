@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
 #if UNITY_URP
@@ -410,6 +409,7 @@ namespace DesertHareStudios.QualitySettings {
                 output.shadowCascadeCount = ShadowCascades;
                 output.supportsHDR = HDR;
                 output.shadowDistance = ShadowDistance;
+                output.colorGradingLutSize = LUTSize;
                 return output;
             }
             set {
@@ -423,6 +423,16 @@ namespace DesertHareStudios.QualitySettings {
                 ShadowDistance = value.shadowDistance;
                 MainShadowResolution = (ShadowResolution)value.mainLightShadowmapResolution;
                 AdditionalShadowAtlasResolution = (ShadowResolution)value.additionalLightsShadowmapResolution;
+                CurrentUniversalAsset = UniversalAsset;
+            }
+        }
+
+        public static int LUTSize {
+            get {
+                return PlayerPrefs.GetInt("dhs.qualitysettings.lutsize", CurrentUniversalAsset.colorGradingLutSize);
+            }
+            set {
+                PlayerPrefs.SetInt("dhs.qualitysettings.lutsize", Mathf.Clamp(value, 16, 65));
                 CurrentUniversalAsset = UniversalAsset;
             }
         }
