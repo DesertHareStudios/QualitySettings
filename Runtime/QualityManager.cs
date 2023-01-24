@@ -82,11 +82,11 @@ namespace DesertHareStudios.QualitySettings {
 
         public static TextureSize TextureSize {
             get {
-                return (TextureSize)PlayerPrefs.GetInt("dhs.qualitysettings.TextureSize", UnityEngine.QualitySettings.masterTextureLimit);
+                return (TextureSize)PlayerPrefs.GetInt("dhs.qualitysettings.TextureSize", UnityEngine.QualitySettings.globalTextureMipmapLimit);
             }
             set {
                 PlayerPrefs.GetInt("dhs.qualitysettings.TextureSize", (int)value);
-                UnityEngine.QualitySettings.masterTextureLimit = (int)value;
+                UnityEngine.QualitySettings.globalTextureMipmapLimit = (int)value;
             }
         }
 
@@ -96,7 +96,7 @@ namespace DesertHareStudios.QualitySettings {
             }
             set {
                 PlayerPrefs.GetInt("dhs.qualitysettings.AnisotropicFiltering", (int)value);
-                UnityEngine.QualitySettings.masterTextureLimit = (int)value;
+                UnityEngine.QualitySettings.globalTextureMipmapLimit = (int)value;
             }
         }
 
