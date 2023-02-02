@@ -8,6 +8,17 @@ using UnityEngine.Rendering.Universal;
 namespace DesertHareStudios.QualitySettings {
 
     public static class QualityManager {
+        public static event Action<Shadows> OnShadowsChanged;
+        public static event Action<bool> OnHDRChanged;
+        public static event Action<MSAA> OnAntiAliasingChanged;
+        public static event Action<ShadowTier> OnShadowTierChanged;
+#if UNITY_URP
+        public static event Action<ShadowResolution> OnAdditionalShadowAtlasResolutionChanged;
+        public static event Action<PostAntiAliasing> OnPostAntialiasingChanged;
+        public static event Action<SoftShadowQuality> OnSoftShadowsQualityChanged;
+#endif
+
+        private static bool hasBeenInitialized = false;
 
         public static void Initialize() {
             if(hasBeenInitialized) {
@@ -32,12 +43,10 @@ namespace DesertHareStudios.QualitySettings {
             AdditionalShadowAtlasResolution = AdditionalShadowAtlasResolution;
             PostAntiAliasing = PostAntiAliasing;
             CurrentUniversalAsset = UniversalAsset;
+            SoftShadowsQuality = SoftShadowsQuality;
 #endif
             hasBeenInitialized = true;
         }
-
-        private static bool hasBeenInitialized = false;
-
 
         public static bool RealtimeReflectionProbes {
             get {
@@ -100,7 +109,6 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
-        public static event Action<Shadows> OnShadowsChanged;
         public static Shadows Shadows {
             get {
 #if UNITY_URP
@@ -192,7 +200,6 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
-        public static event Action<ShadowTier> OnShadowTierChanged;
         public static ShadowTier ShadowTier {
             get {
                 ShadowTier defaultTier = ShadowTier.Medium;
@@ -277,7 +284,6 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
-        public static event Action<bool> OnHDRChanged;
         public static bool HDR {
             get {
 #if UNITY_URP
@@ -297,7 +303,6 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
-        public static event Action<MSAA> OnAntiAliasingChanged;
         public static MSAA AntiAliasing {
             get {
 #if UNITY_URP
@@ -342,7 +347,6 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
-
 #if UNITY_URP
         public static float RenderScale {
             get {
@@ -354,7 +358,6 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
-        public static event Action<ShadowResolution> OnAdditionalShadowAtlasResolutionChanged;
         public static ShadowResolution AdditionalShadowAtlasResolution {
             get {
                 return (ShadowResolution)PlayerPrefs.GetInt(
@@ -370,8 +373,6 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
-        public static event Action<PostAntiAliasing> OnPostAntialiasingChanged;
-
         public static PostAntiAliasing PostAntiAliasing {
             get {
                 return (PostAntiAliasing)PlayerPrefs.GetInt("dhs.qualitysettings.PostAntiAliasing", (int)PostAntiAliasing.Off);
@@ -382,21 +383,28 @@ namespace DesertHareStudios.QualitySettings {
             }
         }
 
+        private static UniversalRenderPipelineAsset internalAsset;
         public static UniversalRenderPipelineAsset CurrentUniversalAsset {
             get {
-                UniversalRenderPipelineAsset output = (UniversalRenderPipelineAsset)UnityEngine.QualitySettings.renderPipeline;
-                if(!output) {
-                    output = (UniversalRenderPipelineAsset)GraphicsSettings.defaultRenderPipeline;
+                if(!internalAsset) {
+                    internalAsset = (UniversalRenderPipelineAsset)UnityEngine.QualitySettings.renderPipeline;
+                    if(internalAsset) {
+                        internalAsset = UnityEngine.Object.Instantiate(internalAsset);
+                    }
+                }
+                if(!internalAsset) {
+                    internalAsset = (UniversalRenderPipelineAsset)GraphicsSettings.defaultRenderPipeline;
                 }
 #if UNITY_EDITOR
-                if(!output) {
-                    output = UniversalRenderPipelineAsset.Create();
+                if(!internalAsset) {
+                    internalAsset = UniversalRenderPipelineAsset.Create();
                 }
 #endif
-                return output;
+                return internalAsset;
             }
-            set {
-                UnityEngine.QualitySettings.renderPipeline = value;
+            private set {
+                internalAsset = value;
+                UnityEngine.QualitySettings.renderPipeline = internalAsset;
             }
         }
 
@@ -423,7 +431,6 @@ namespace DesertHareStudios.QualitySettings {
                 ShadowDistance = value.shadowDistance;
                 MainShadowResolution = (ShadowResolution)value.mainLightShadowmapResolution;
                 AdditionalShadowAtlasResolution = (ShadowResolution)value.additionalLightsShadowmapResolution;
-                CurrentUniversalAsset = UniversalAsset;
             }
         }
 
@@ -436,59 +443,19 @@ namespace DesertHareStudios.QualitySettings {
                 CurrentUniversalAsset = UniversalAsset;
             }
         }
+
+        public static SoftShadowQuality SoftShadowsQuality {
+
+            get {
+                return (SoftShadowQuality)PlayerPrefs.GetInt("dhs.qualitysettings.softshadowsquality", (int)SoftShadowQuality.Medium);
+            }
+            set {
+                PlayerPrefs.SetInt("dhs.qualitysettings.softshadowsquality", (int)value);
+                OnSoftShadowsQualityChanged?.Invoke(value);
+            }
+        }
 #endif
 
-    }
-
-    public enum VSync {
-        Off = 0,
-        EveryVBlank = 1,
-        EverySecondVBlank = 2
-    }
-
-    public enum TextureSize {
-        Full = 0,
-        Half = 1,
-        Quarter = 2,
-        Eighth = 3
-    }
-
-    public enum Shadows {
-        Off = 0, Hard = 1, Soft = 2
-    }
-
-    public enum ShadowResolution {
-        Off = 0,
-        Resolution256 = 256,
-        Resolution512 = 512,
-        Resolution1024 = 1024,
-        Resolution2048 = 2048,
-        Resolution4096 = 4096
-    }
-
-    public enum ShadowTier {
-        Off, Low, Medium, High
-    }
-
-    public enum MSAA {
-#if UNITY_URP
-        Off = 1,
-#else
-    Off = 0,
-#endif
-        MSAA2 = 2,
-        MSAA4 = 4,
-        MSAA8 = 8
-    }
-
-    public enum PostAntiAliasing {
-        Off, FXAA, SMAALow, SMAAMedium, SMAAHigh
-    }
-
-    public enum MaterialQuality {
-        High = 0,
-        Medium = 1,
-        Low = 2
     }
 
 }

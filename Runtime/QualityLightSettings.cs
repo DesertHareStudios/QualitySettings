@@ -21,13 +21,15 @@ namespace DesertHareStudios.QualitySettings {
             l = GetComponent<Light>();
             QualityManager.OnShadowTierChanged += OnShadowTierChanged;
             QualityManager.OnShadowsChanged += OnShadowsChanged;
+            OnShadowTierChanged(QualityManager.ShadowTier);
+            OnShadowsChanged(QualityManager.Shadows);
 #if UNITY_URP
             uald = GetComponent<UniversalAdditionalLightData>();
             QualityManager.OnAdditionalShadowAtlasResolutionChanged += OnAdditionalShadowAtlasResolutionChanged;
+            QualityManager.OnSoftShadowsQualityChanged += OnSoftShadowsQualityChanged;
             OnAdditionalShadowAtlasResolutionChanged(QualityManager.AdditionalShadowAtlasResolution);
+            OnSoftShadowsQualityChanged(QualityManager.SoftShadowsQuality);
 #endif
-            OnShadowTierChanged(QualityManager.ShadowTier);
-            OnShadowsChanged(QualityManager.Shadows);
         }
 
         private void OnDestroy() {
@@ -35,6 +37,7 @@ namespace DesertHareStudios.QualitySettings {
             QualityManager.OnShadowsChanged -= OnShadowsChanged;
 #if UNITY_URP
             QualityManager.OnAdditionalShadowAtlasResolutionChanged -= OnAdditionalShadowAtlasResolutionChanged;
+            QualityManager.OnSoftShadowsQualityChanged -= OnSoftShadowsQualityChanged;
 #endif
         }
 
@@ -92,6 +95,10 @@ namespace DesertHareStudios.QualitySettings {
 #if UNITY_URP
         private void OnAdditionalShadowAtlasResolutionChanged(ShadowResolution obj) {
             OnShadowTierChanged(QualityManager.ShadowTier);
+        }
+
+        private void OnSoftShadowsQualityChanged(SoftShadowQuality value) {
+            uald.softShadowQuality = value;
         }
 #endif
 

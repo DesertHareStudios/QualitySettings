@@ -99,6 +99,18 @@ namespace DesertHareStudios.QualitySettings {
                     additionalCameraData.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
                     additionalCameraData.antialiasingQuality = AntialiasingQuality.High;
                     break;
+                case PostAntiAliasing.TAALow:
+                    additionalCameraData.antialiasing = AntialiasingMode.TemporalAntiAliasing;
+                    additionalCameraData.antialiasingQuality = AntialiasingQuality.Low;
+                    break;
+                case PostAntiAliasing.TAAMedium:
+                    additionalCameraData.antialiasing = AntialiasingMode.TemporalAntiAliasing;
+                    additionalCameraData.antialiasingQuality = AntialiasingQuality.Medium;
+                    break;
+                case PostAntiAliasing.TAAHigh:
+                    additionalCameraData.antialiasing = AntialiasingMode.TemporalAntiAliasing;
+                    additionalCameraData.antialiasingQuality = AntialiasingQuality.High;
+                    break;
             }
         }
 #endif
