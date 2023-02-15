@@ -350,7 +350,7 @@ namespace DesertHareStudios.QualitySettings {
 #if UNITY_URP
         public static float RenderScale {
             get {
-                return PlayerPrefs.GetFloat("dhs.qualitysettings.RenderScale", UnityEngine.QualitySettings.lodBias);
+                return PlayerPrefs.GetFloat("dhs.qualitysettings.RenderScale", 1.0f);
             }
             set {
                 PlayerPrefs.SetFloat("dhs.qualitysettings.RenderScale", value);
