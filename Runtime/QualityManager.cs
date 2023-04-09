@@ -19,11 +19,13 @@ namespace DesertHareStudios.QualitySettings {
 #endif
 
         private static bool hasBeenInitialized = false;
+        private static bool savePrefs = true;
 
         public static void Initialize() {
             if(hasBeenInitialized) {
                 return;
             }
+            savePrefs = false;
             RealtimeReflectionProbes = RealtimeReflectionProbes;
             PixelLightCount = PixelLightCount;
             VSync = VSync;
@@ -42,9 +44,10 @@ namespace DesertHareStudios.QualitySettings {
             RenderScale = RenderScale;
             AdditionalShadowAtlasResolution = AdditionalShadowAtlasResolution;
             PostAntiAliasing = PostAntiAliasing;
-            CurrentUniversalAsset = UniversalAsset;
             SoftShadowsQuality = SoftShadowsQuality;
+            CurrentUniversalAsset = UniversalAsset;
 #endif
+            savePrefs = true;
             hasBeenInitialized = true;
         }
 
@@ -55,7 +58,7 @@ namespace DesertHareStudios.QualitySettings {
                     UnityEngine.QualitySettings.realtimeReflectionProbes ? 1 : 0) > 0;
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.RealtimeReflectionProbes", value ? 1 : 0);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.RealtimeReflectionProbes", value ? 1 : 0);
                 UnityEngine.QualitySettings.realtimeReflectionProbes = value;
             }
         }
@@ -71,7 +74,7 @@ namespace DesertHareStudios.QualitySettings {
 #endif
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.PixelLightCount", value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.PixelLightCount", value);
                 UnityEngine.QualitySettings.pixelLightCount = value;
 #if UNITY_URP
                 CurrentUniversalAsset = UniversalAsset;
@@ -84,7 +87,7 @@ namespace DesertHareStudios.QualitySettings {
                 return (VSync)PlayerPrefs.GetInt("dhs.qualitysettings.VSync", UnityEngine.QualitySettings.vSyncCount);
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.VSync", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.VSync", (int)value);
                 UnityEngine.QualitySettings.vSyncCount = (int)value;
             }
         }
@@ -94,7 +97,7 @@ namespace DesertHareStudios.QualitySettings {
                 return (TextureSize)PlayerPrefs.GetInt("dhs.qualitysettings.TextureSize", UnityEngine.QualitySettings.globalTextureMipmapLimit);
             }
             set {
-                PlayerPrefs.GetInt("dhs.qualitysettings.TextureSize", (int)value);
+                if(savePrefs) PlayerPrefs.GetInt("dhs.qualitysettings.TextureSize", (int)value);
                 UnityEngine.QualitySettings.globalTextureMipmapLimit = (int)value;
             }
         }
@@ -104,7 +107,7 @@ namespace DesertHareStudios.QualitySettings {
                 return (AnisotropicFiltering)PlayerPrefs.GetInt("dhs.qualitysettings.AnisotropicFiltering", (int)UnityEngine.QualitySettings.anisotropicFiltering);
             }
             set {
-                PlayerPrefs.GetInt("dhs.qualitysettings.AnisotropicFiltering", (int)value);
+                if(savePrefs) PlayerPrefs.GetInt("dhs.qualitysettings.AnisotropicFiltering", (int)value);
                 UnityEngine.QualitySettings.globalTextureMipmapLimit = (int)value;
             }
         }
@@ -132,7 +135,7 @@ namespace DesertHareStudios.QualitySettings {
 #endif
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.Shadows", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.Shadows", (int)value);
                 OnShadowsChanged?.Invoke(value);
                 switch(value) {
                     case Shadows.Off:
@@ -177,7 +180,7 @@ namespace DesertHareStudios.QualitySettings {
 #endif
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.MainShadowResolution", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.MainShadowResolution", (int)value);
                 switch(value) {
                     case ShadowResolution.Off:
                     case ShadowResolution.Resolution256:
@@ -220,7 +223,7 @@ namespace DesertHareStudios.QualitySettings {
                 return (ShadowTier)PlayerPrefs.GetInt("dhs.qualitysettings.ShadowTier", (int)defaultTier);
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.ShadowTier", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.ShadowTier", (int)value);
                 switch(value) {
                     case ShadowTier.Off:
                         UnityEngine.QualitySettings.shadowResolution = UnityEngine.ShadowResolution.Low;
@@ -248,7 +251,7 @@ namespace DesertHareStudios.QualitySettings {
 #endif
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.ShadowCascades", value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.ShadowCascades", value);
                 UnityEngine.QualitySettings.shadowCascades = value;
 #if UNITY_URP
                 CurrentUniversalAsset = UniversalAsset;
@@ -279,7 +282,7 @@ namespace DesertHareStudios.QualitySettings {
                 return PlayerPrefs.GetFloat("dhs.qualitysettings.LODBias", UnityEngine.QualitySettings.lodBias);
             }
             set {
-                PlayerPrefs.SetFloat("dhs.qualitysettings.LODBias", value);
+                if(savePrefs) PlayerPrefs.SetFloat("dhs.qualitysettings.LODBias", value);
                 UnityEngine.QualitySettings.lodBias = value;
             }
         }
@@ -295,7 +298,7 @@ namespace DesertHareStudios.QualitySettings {
 #endif
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.HDR", value ? 1 : 0);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.HDR", value ? 1 : 0);
                 OnHDRChanged?.Invoke(value);
 #if UNITY_URP
                 CurrentUniversalAsset = UniversalAsset;
@@ -312,7 +315,7 @@ namespace DesertHareStudios.QualitySettings {
 #endif
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.AntiAliasing", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.AntiAliasing", (int)value);
                 OnAntiAliasingChanged?.Invoke(value);
                 UnityEngine.QualitySettings.antiAliasing = (int)value;
 #if UNITY_URP
@@ -326,7 +329,7 @@ namespace DesertHareStudios.QualitySettings {
                 return (MaterialQuality)PlayerPrefs.GetInt("dhs.qualitysettings.MaterialQuality", (int)MaterialQuality.High);
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.MaterialQuality", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.MaterialQuality", (int)value);
                 switch(value) {
                     case MaterialQuality.High:
                         Shader.EnableKeyword("MATERIAL_QUALITY_HIGH");
@@ -353,7 +356,7 @@ namespace DesertHareStudios.QualitySettings {
                 return PlayerPrefs.GetFloat("dhs.qualitysettings.RenderScale", 1.0f);
             }
             set {
-                PlayerPrefs.SetFloat("dhs.qualitysettings.RenderScale", value);
+                if(savePrefs) PlayerPrefs.SetFloat("dhs.qualitysettings.RenderScale", value);
                 CurrentUniversalAsset = UniversalAsset;
             }
         }
@@ -365,7 +368,7 @@ namespace DesertHareStudios.QualitySettings {
                     CurrentUniversalAsset.additionalLightsShadowmapResolution);
             }
             set {
-                PlayerPrefs.SetInt(
+                if(savePrefs) PlayerPrefs.SetInt(
                     "dhs.qualitysettings.AdditionalShadowAtlasResolution",
                     (int)value);
                 OnAdditionalShadowAtlasResolutionChanged?.Invoke(value);
@@ -378,7 +381,7 @@ namespace DesertHareStudios.QualitySettings {
                 return (PostAntiAliasing)PlayerPrefs.GetInt("dhs.qualitysettings.PostAntiAliasing", (int)PostAntiAliasing.Off);
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.PostAntiAliasing", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.PostAntiAliasing", (int)value);
                 OnPostAntialiasingChanged?.Invoke(value);
             }
         }
@@ -439,7 +442,7 @@ namespace DesertHareStudios.QualitySettings {
                 return PlayerPrefs.GetInt("dhs.qualitysettings.lutsize", CurrentUniversalAsset.colorGradingLutSize);
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.lutsize", Mathf.Clamp(value, 16, 65));
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.lutsize", Mathf.Clamp(value, 16, 65));
                 CurrentUniversalAsset = UniversalAsset;
             }
         }
@@ -450,7 +453,7 @@ namespace DesertHareStudios.QualitySettings {
                 return (SoftShadowQuality)PlayerPrefs.GetInt("dhs.qualitysettings.softshadowsquality", (int)SoftShadowQuality.Medium);
             }
             set {
-                PlayerPrefs.SetInt("dhs.qualitysettings.softshadowsquality", (int)value);
+                if(savePrefs) PlayerPrefs.SetInt("dhs.qualitysettings.softshadowsquality", (int)value);
                 OnSoftShadowsQualityChanged?.Invoke(value);
             }
         }
